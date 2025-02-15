@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= pointedUser.username %></title>
+</head>
+<body>
+    <%- include('../partials/_navbar.ejs') %>
+
+    <h1><%= pointedUser.username %></h1>
+    <% if (pointedUser.pantry && pointedUser.pantry.length > 0) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pantry Item</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% pointedUser.pantry.forEach(item => { %>
+                    <tr>
+                        <td><%= item.name %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No pantry items available.</p>
+    <% } %>
+    
+</body>
+</html>

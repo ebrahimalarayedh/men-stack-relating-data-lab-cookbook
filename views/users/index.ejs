@@ -1,0 +1,121 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Our Community</title>
+
+    
+</head>
+
+<body>
+    <%- include('../partials/_navbar.ejs') %>
+
+        <% allUsers.forEach((user)=>{ %>
+            <div>
+                <h1>
+                    <%=user.username%>:
+                </h1>
+                <% if(user.pantry && user.pantry.length>0){ %>
+
+                    <ul>
+                        <% user.pantry.forEach(item=>{ %>
+                            <li>
+                                <%=item.name%>
+                            </li>
+                            <%})%>
+                    </ul>
+
+                    <% }else { %>
+                        <p>No pantry items available.</p>
+                        <% } %>
+            </div>
+
+
+            <% }) %>
+
+
+
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Our Community</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .user-container {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/_navbar.ejs') %>
+
+    <% allUsers.forEach((user) => { %>
+        <div class="user-container">
+            <a href="/users/show/<%=user._id%>"><h1><%= user.username %>:</h1></a>
+            <% if (user.pantry && user.pantry.length > 0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pantry Item</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% user.pantry.forEach(item => { %>
+                            <tr>
+                                <td><%= item.name %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No pantry items available.</p>
+            <% } %>
+        </div>
+    <% }) %>
+
+</body>
+
+</html>
