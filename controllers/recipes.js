@@ -4,7 +4,7 @@ const router = express.Router()
 
 const User = require("../models/user")
 const Ingredient = require("../models/ingredient")
-const Recip = require("../models/recipe")
+const Recipe = require("../models/recipe")
 
 //index
 router.get("/", async (req,res)=>{
@@ -30,7 +30,7 @@ router.get("/new", async (req,res)=>{
 router.post("/", async (req,res)=>{
     console.log(req.body)
     try{
-        const createdRecipe = await Ingredient.create({
+        const createdRecipe = await Recipe.create({
             name: req.body.name,
             instructions: req.body.instructions,
             owner: req.session.user,

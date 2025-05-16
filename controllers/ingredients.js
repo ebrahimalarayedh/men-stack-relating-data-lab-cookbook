@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
     }
 })
 
-//create for bulk
+//create ingredients for bulk
 router.post('/bulk', async (req, res) => {
   try {
     const names = req.body.names.map(name => name.trim().toLowerCase());

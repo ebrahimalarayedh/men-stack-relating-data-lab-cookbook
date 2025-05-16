@@ -21,10 +21,10 @@
             <br>
             <br>
 
-            <label for="ingredients">Ingredients: </label>
-            <select name="ingredients" id="ingredients-select">
+            <label for="ingredients-select">Ingredients: </label>
+            <select name="ingredients[]" id="ingredients-select" multiple>
                 <% ingredients.forEach((e,i)=>{%>
-                    <option value="<%= i._id%>">
+                    <option value="<%= e._id%>">
                         <%=e.name%>
                     </option>
 
@@ -69,36 +69,35 @@
                         const text = await response.text();
                         console.error('Server response (not ok):', text);
                         throw new Error('Failed to add ingredient.');
-                    } const newIngredients = await response.json();
+                    }
+                    const newIngredients = await response.json();
 
-                    newIngredients.forEach(ingredient => {
+                    // 🧠 Get existing ingredient IDs in the <select>
+                    const existingIds = Array.from(ingredientsSelect.options).map(opt => opt.value);
+                    console.log("existingIds", existingIds)
+
+                    // 🧹 Filter out duplicates
+                    const uniqueNewIngredients = newIngredients.filter(
+                        ing => !existingIds.includes(ing._id)
+                    );
+
+                    console.log("uniqueNewIngredients", uniqueNewIngredients)
+
+
+                    // ➕ Add new unique ingredients to <select>
+                    uniqueNewIngredients.forEach(ingredient => {
                         const option = document.createElement('option');
-                        option.value = newIngredient._id;
-                        option.textContent = newIngredient.name;
+                        option.value = ingredient._id;
+                        option.textContent = ingredient.name;
                         option.selected = true;
                         ingredientsSelect.appendChild(option);
-                    })
+                    });
+
 
                     newIngredientInput.value = '';
                 } catch (err) {
                     alert(err.message);
                 }
-                // for testing
-                //                 const response = await fetch('/ingredients', {
-                //   method: 'POST',
-                //   headers: { 'Content-Type': 'application/json' },
-                //   body: JSON.stringify({ name })
-                // });
-
-                // const text = await response.text();
-                // console.log('RESPONSE TEXT:', text); // this shows what the server is actually returning
-
-                // try {
-                //   const json = JSON.parse(text);
-                //   console.log('Parsed JSON:', json);
-                // } catch (err) {
-                //   console.error('Invalid JSON returned:', err);
-                // }
             });
         </script>
 
