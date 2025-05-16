@@ -6,6 +6,9 @@
     <% 
     <!-- console.log(locals) -->
     if(locals.currentUrl !== "/users"){ %><a href="/users">Explore Our Community</a> <%}%>
+    <%if(locals.currentUrl !== "/recipes"){ %><a href="/recipes">my recipes</a> <%}%>
+    <%if(locals.currentUrl !== "/recipes/new"){ %><a href="/recipes/new">Add New Recipe</a> <%}%>
+
 
     <% } else { %>
     <a href="/auth/sign-in">Sign In</a>

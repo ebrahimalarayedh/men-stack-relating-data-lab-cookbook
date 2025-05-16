@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Recipe</title>
+</head>
+
+<body>
+    <%- include('../partials/_navbar.ejs') %>
+        <h1>Add a Recipe: </h1>
+
+        <form action="/recipes" method="post">
+            <label for="name">Recipe Name: </label>
+            <input type="text" name="name" id="name" required>
+            <br>
+            <br>
+            <label for="instructions">Instructions: </label>
+            <textarea name="instructions" id="instructions"></textarea>
+            <br>
+            <br>
+
+            <label for="ingredients">Ingredients: </label>
+            <select name="ingredients" id="ingredients-select">
+                <% ingredients.forEach((e,i)=>{%>
+                    <option value="<%= i._id%>">
+                        <%=e.name%>
+                    </option>
+
+
+                    <%})%>
+            </select>
+
+
+            <div>
+                <input type="text" id="new-ingredient" placeholder="e.g. Sugar, Milk, Eggs" />
+                <button type="button" id="add-ingredient-btn">Add Ingredient</button>
+            </div>
+
+            <br><br>
+            <button type="submit">Add</button>
+        </form>
+
+
+        <script>
+            const addBtn = document.getElementById('add-ingredient-btn');
+            const newIngredientInput = document.getElementById('new-ingredient');
+            const ingredientsSelect = document.getElementById('ingredients-select');
+
+            addBtn.addEventListener('click', async () => {
+                const rawInput = newIngredientInput.value.trim();
+                if (!rawInput) return alert('Please enter at least one ingredient name.');
+                const names = rawInput.split(',').map(n => n.trim()).filter(Boolean);
+
+
+                try {
+                    const response = await fetch('/ingredients/bulk', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ names })
+                    });
+                    if (response.status === 401) {
+                        return alert('You must be logged in to add ingredients.');
+                    }
+
+
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error('Server response (not ok):', text);
+                        throw new Error('Failed to add ingredient.');
+                    } const newIngredients = await response.json();
+
+                    newIngredients.forEach(ingredient => {
+                        const option = document.createElement('option');
+                        option.value = newIngredient._id;
+                        option.textContent = newIngredient.name;
+                        option.selected = true;
+                        ingredientsSelect.appendChild(option);
+                    })
+
+                    newIngredientInput.value = '';
+                } catch (err) {
+                    alert(err.message);
+                }
+                // for testing
+                //                 const response = await fetch('/ingredients', {
+                //   method: 'POST',
+                //   headers: { 'Content-Type': 'application/json' },
+                //   body: JSON.stringify({ name })
+                // });
+
+                // const text = await response.text();
+                // console.log('RESPONSE TEXT:', text); // this shows what the server is actually returning
+
+                // try {
+                //   const json = JSON.parse(text);
+                //   console.log('Parsed JSON:', json);
+                // } catch (err) {
+                //   console.error('Invalid JSON returned:', err);
+                // }
+            });
+        </script>
+
+
+</body>
+
+</html>

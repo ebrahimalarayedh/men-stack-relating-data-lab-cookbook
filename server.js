@@ -14,6 +14,9 @@ const passUrlToView = require('./middleware/pass-Url-ToView.js')
 const authController = require('./controllers/auth.js');
 const foodsController = require('./controllers/foods.js');
 const userController = require("./controllers/users.js")
+const recipesController = require("./controllers/recipes.js")
+const ingredientsController = require('./controllers/ingredients.js');
+
 
 const port = process.env.PORT ? process.env.PORT : '3000';
 
@@ -24,6 +27,7 @@ mongoose.connection.on('connected', () => {
 });
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(methodOverride('_method'));
 // app.use(morgan('dev'));
 app.use(
@@ -55,6 +59,9 @@ app.use('/auth', authController);
 app.use(isSignedIn);
 app.use("/users", userController)
 app.use('/users/:userId/foods', foodsController)
+app.use("/recipes", recipesController)
+app.use('/ingredients', ingredientsController);
+
 
 app.listen(port, () => {
   console.log(`The express app is ready on port ${port}!`);
