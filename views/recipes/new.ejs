@@ -21,16 +21,15 @@
             <br>
             <br>
 
-            <label for="ingredients-select">Ingredients: </label>
-            <select name="ingredients[]" id="ingredients-select" multiple>
-                <% ingredients.forEach((e,i)=>{%>
-                    <option value="<%= e._id%>">
-                        <%=e.name%>
-                    </option>
-
-
-                    <%})%>
-            </select>
+            <label for="ingredients-list">Ingredients: </label>
+            <div id="ingredients-list">
+                <% ingredients.forEach((ingredient)=> { %>
+                    <label>
+                        <input type="checkbox" name="ingredients" value="<%= ingredient._id %>" />
+                        <%= ingredient.name %>
+                    </label><br>
+                    <% }); %>
+            </div>
 
 
             <div>
@@ -46,13 +45,16 @@
         <script>
             const addBtn = document.getElementById('add-ingredient-btn');
             const newIngredientInput = document.getElementById('new-ingredient');
-            const ingredientsSelect = document.getElementById('ingredients-select');
+            const ingredientsList = document.getElementById('ingredients-list');
+
+
+
 
             addBtn.addEventListener('click', async () => {
                 const rawInput = newIngredientInput.value.trim();
                 if (!rawInput) return alert('Please enter at least one ingredient name.');
-                const names = rawInput.split(',').map(n => n.trim()).filter(Boolean);
 
+                const names = rawInput.split(',').map(n => n.trim()).filter(Boolean);
 
                 try {
                     const response = await fetch('/ingredients/bulk', {
@@ -60,45 +62,48 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ names })
                     });
+
                     if (response.status === 401) {
                         return alert('You must be logged in to add ingredients.');
                     }
-
 
                     if (!response.ok) {
                         const text = await response.text();
                         console.error('Server response (not ok):', text);
                         throw new Error('Failed to add ingredient.');
                     }
-                    const newIngredients = await response.json();
 
-                    // 🧠 Get existing ingredient IDs in the <select>
-                    const existingIds = Array.from(ingredientsSelect.options).map(opt => opt.value);
-                    console.log("existingIds", existingIds)
+                    const allIngredients = await response.json();
 
-                    // 🧹 Filter out duplicates
-                    const uniqueNewIngredients = newIngredients.filter(
-                        ing => !existingIds.includes(ing._id)
-                    );
+                    // Get existing IDs
+                    const existingIds = new Set(Array.from(document.querySelectorAll('#ingredients-list input')).map(i => i.value))
 
-                    console.log("uniqueNewIngredients", uniqueNewIngredients)
-
-
-                    // ➕ Add new unique ingredients to <select>
-                    uniqueNewIngredients.forEach(ingredient => {
-                        const option = document.createElement('option');
-                        option.value = ingredient._id;
-                        option.textContent = ingredient.name;
-                        option.selected = true;
-                        ingredientsSelect.appendChild(option);
+                    // Add only new unique ingredients
+                    allIngredients.forEach(ingredient => {
+                        if (!existingIds.has(ingredient._id)) {
+                            const label = document.createElement('label');
+                            label.innerHTML = `
+          <input type="checkbox" name="ingredients" value="${ingredient._id}" checked />
+          ${ingredient.name}
+        `;
+                            ingredientsList.appendChild(label);
+                            ingredientsList.appendChild(document.createElement('br'));
+                        }
+                        else{
+                            //I want here to checked the exitsting ingredient
+                            Array.from(document.querySelectorAll('#ingredients-list input')).forEach(input=>{
+                                if(ingredient._id===input.value)
+                                    input.checked= true
+                            })
+                        }
                     });
-
 
                     newIngredientInput.value = '';
                 } catch (err) {
                     alert(err.message);
                 }
             });
+
         </script>
 
 
